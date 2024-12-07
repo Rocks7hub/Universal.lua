@@ -1,0 +1,163 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Window = OrionLib:MakeWindow({
+Name = "pedrin e Caio",
+HidePremium = false,
+SaveConfig = true,
+ConfigFolder = "FightmanSim"
+})
+
+local SpeedActive = false
+local SpeedValue = 30
+local Training = false
+local LuckActive = false
+
+-- Função para tornar as luvas leves
+local function MakeGlovesLight()
+for _, glove in pairs(game:GetService("Workspace").Gloves:GetChildren()) do
+if glove:IsA("Model") and glove:FindFirstChild("TouchInterest") then
+for _, part in pairs(glove:GetChildren()) do
+if part:IsA("BasePart") then
+part.Massless = true
+end
+end
+end
+end
+end
+
+-- Função para definir a velocidade do jogador
+local function SetPlayerSpeed()
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+if SpeedActive then
+humanoid.WalkSpeed = SpeedValue
+end
+end)
+
+if SpeedActive then
+humanoid.WalkSpeed = SpeedValue
+else
+humanoid.WalkSpeed = 16 -- velocidade padrão
+end
+end
+
+-- Função para treinar automaticamente
+local function TrainAutomatically()
+while Training do
+local args = { [1] = "Train" }
+game:GetService("ReplicatedStorage").Events.Training:FireServer(unpack(args))
+wait(0.5) -- tempo de espera entre os socos
+end
+end
+
+-- Função para aumentar a sorte de obter pets bons
+local function IncreaseLuck()
+while LuckActive do
+local args = { [1] = "LuckBoost" }
+game:GetService("ReplicatedStorage").Events.Boost:FireServer(unpack(args))
+wait(10) -- tempo de espera entre os boosts de sorte
+end
+end
+
+-- Função para abrir a caixa de longa distância
+local function OpenBox()
+local args = { [1] = "Basic", [2] = "Single" }
+game:GetService("ReplicatedStorage").Functions.OpenEgg:InvokeServer(unpack(args))
+end
+
+-- Criação da aba "Farm"
+local TabFarm = Window:MakeTab({
+Name = "Farm",
+Icon = "rbxassetid://4483345998",
+PremiumOnly = false
+})
+
+-- Botão para tornar as luvas leves
+TabFarm:AddButton({
+Name = "Tornar Luvas Leves",
+Callback = function()
+MakeGlovesLight()
+end
+})
+
+-- Toggle para ativar/desativar a velocidade
+TabFarm:AddToggle({
+Name = "Ativar Velocidade",
+Default = false,
+Callback = function(Value)
+SpeedActive = Value
+SetPlayerSpeed()
+end
+})
+
+-- Slider para ajustar o valor da velocidade
+TabFarm:AddSlider({
+Name = "Valor da Velocidade",
+Min = 16,
+Max = 100,
+Default = 30,
+Increment = 1,
+ValueName = "Velocidade",
+Callback = function(Value)
+SpeedValue = Value
+if SpeedActive then
+SetPlayerSpeed()
+end
+end
+})
+
+-- Botão para teleporte para frente
+TabFarm:AddButton({
+Name = "Teleporte para Frente",
+Callback = function()
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local forwardVector = humanoidRootPart.CFrame.LookVector
+local newPosition = humanoidRootPart.Position + (forwardVector * 55) -- teleporta 55 unidades à frente
+humanoidRootPart.CFrame = CFrame.new(newPosition)
+end
+})
+
+-- Toggle para ativar/desativar o treinamento
+TabFarm:AddToggle({
+Name = "Ativar Treinamento",
+Default = false,
+Callback = function(Value)
+Training = Value
+if Training then
+TrainAutomatically()
+end
+end
+})
+
+-- Criação da aba "Humanoid"
+local TabHumanoid = Window:MakeTab({
+Name = "Humanoid",
+Icon = "rbxassetid://4483345998",
+PremiumOnly = false
+})
+
+-- Botão para abrir a caixa 1x de longa distância
+TabHumanoid:AddButton({
+Name = "Abrir Caixa 1x",
+Callback = function()
+OpenBox()
+end
+})
+
+-- Toggle para ativar/desativar o aumento de sorte
+TabHumanoid:AddToggle({
+Name = "Ativar Sorte",
+Default = false,
+Callback = function(Value)
+LuckActive = Value
+if LuckActive then
+IncreaseLuck()
+end
+end
+})
+
+OrionLib:Init()
