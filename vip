@@ -1,13 +1,6 @@
 local Players = game:GetService("Players")
 local allowedUsernames = {
     "DevCode7",
-    "Vaga", 
-    "Vaga",
-    "Vata",
-    "Vaga",
-    "Vaga",
-    "Vaga",
-    "Vaga"
 }
 
 local function checkPermission(player)
