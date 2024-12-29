@@ -1,7 +1,4 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
-local Player = Players.LocalPlayer
-
+local Players = game:GetService("Players")
 local allowedUsernames = {
     "DevCode7",
     "Vaga", 
@@ -28,10 +25,10 @@ local function checkPermission(player)
     end
 end
 
-game.Players.PlayerAdded:Connect(function(player)
+Players.PlayerAdded:Connect(function(player)
     checkPermission(player)
 end)
 
-for _, player in ipairs(game.Players:GetPlayers()) do
+for _, player in ipairs(Players:GetPlayers()) do
     checkPermission(player)
 end
