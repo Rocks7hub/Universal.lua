@@ -1,9 +1,16 @@
 local Players = game:GetService("Players")
 local allowedUsernames = {
     "DevCode7",
+    "Vaga"
 }
 
+local checkedPlayers = {}
+
 local function checkPermission(player)
+    if checkedPlayers[player.UserId] then
+        return
+    end
+
     local isAllowed = false
     for _, username in ipairs(allowedUsernames) do
         if player.Name == username then
@@ -16,12 +23,14 @@ local function checkPermission(player)
         player:Kick("Você Não tem Acesso, Esse Script é Premium!")
         print("Jogador " .. player.Name .. " foi banido.")
     end
+
+    checkedPlayers[player.UserId] = true
 end
 
 Players.PlayerAdded:Connect(function(player)
     checkPermission(player)
 end)
 
-for _, player in ipairs(Players:GetPlayers()) do
+for _, player in pairs(Players:GetPlayers()) do
     checkPermission(player)
 end
